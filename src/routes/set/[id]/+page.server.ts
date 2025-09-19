@@ -7,13 +7,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			id: params.id
 		},
 		include: {
-			author: {
-				select: {
-					id: true,
-					name: true,
-					image: true
-				}
-			}
+			terms: true
 		}
 	});
 
