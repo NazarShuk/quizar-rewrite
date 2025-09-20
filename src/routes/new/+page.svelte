@@ -49,11 +49,14 @@
 	</form>
 	<div class="mt-5 flex flex-col gap-5">
 		{#each cards as card, i (i)}
-			<Card.Root>
+			<Card.Root class="gap-1">
 				<Card.Header>
-					<Input minlength={1} maxlength={512} bind:value={card.term} placeholder="Term" />
+					<Card.Action>
+						<Button variant="destructive" onclick={() => cards.splice(i, 1)}>Delete</Button>
+					</Card.Action>
 				</Card.Header>
-				<Card.Content>
+				<Card.Content class="flex flex-col gap-1">
+					<Input minlength={1} maxlength={512} bind:value={card.term} placeholder="Term" />
 					<Input
 						minlength={1}
 						maxlength={512}
@@ -61,9 +64,6 @@
 						placeholder="Definition"
 					/>
 				</Card.Content>
-				<Card.Footer class="flex flex-row justify-end gap-2">
-					<Button variant="destructive" onclick={() => cards.splice(i, 1)}>Delete</Button>
-				</Card.Footer>
 			</Card.Root>
 		{/each}
 

@@ -10,7 +10,7 @@
 	<h2>{props.data.set?.authorId}</h2>
 
 	<ul class="mt-5">
-		{#each props.data.set?.terms as term}
+		{#each props.data.set?.terms as term (term.id)}
 			<li>
 				<Card.Root>
 					<Card.Header>

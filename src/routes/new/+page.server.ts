@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import { prisma } from '../../prisma';
+import { prisma } from '$lib/prisma';
 import type { Actions } from './$types';
 import * as z from 'zod';
 
