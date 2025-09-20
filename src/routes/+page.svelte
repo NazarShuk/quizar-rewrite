@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
 
@@ -8,6 +9,6 @@
 
 	<div class="mt-10 flex flex-row gap-4">
 		<Button>Explore Study Sets</Button>
-		<Button>Make your own</Button>
+		<Button onclick={() => goto('/new')}>Make your own</Button>
 	</div>
 </div>
