@@ -5,6 +5,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
 	const { data } = $props() as PageProps;
 
@@ -17,7 +18,11 @@
 	}
 </script>
 
-<div class="m-auto h-full w-1/2">
+<svelte:head>
+	<title>Search | Quizar</title>
+</svelte:head>
+
+<div class="m-auto h-full w-[95%] md:w-1/2">
 	<h1 class="text-2xl font-bold">Search</h1>
 
 	<form class="flex w-full flex-row gap-5" onsubmit={handleSubmit}>
@@ -27,13 +32,23 @@
 
 	{#if data.query}
 		<h2 class="text-xl font-bold">Search results for "{data.query}"</h2>
-		{#each data.sets as set (set.id)}
-			<Card.Root>
-				<Card.Header>
-					<Card.Title><a href={resolve(`/set/${set.id}`)}>{set.name}</a></Card.Title>
-					<Card.Description>By {set.authorId}</Card.Description>
-				</Card.Header>
-			</Card.Root>
-		{/each}
 	{/if}
+
+	<div class="mt-5 flex flex-col gap-5">
+		{#await data.sets}
+			<!-- eslint-disable-next-line -->
+			{#each Array(5) as _, i (i)}
+				<Skeleton class="h-24 w-full" />
+			{/each}
+		{:then sets}
+			{#each sets as set (set.id)}
+				<Card.Root class="cursor-pointer" onclick={() => goto(resolve(`/set/${set.id}`))}>
+					<Card.Header>
+						<Card.Title>{set.name}</Card.Title>
+						<Card.Description>By {set.authorId}</Card.Description>
+					</Card.Header>
+				</Card.Root>
+			{/each}
+		{/await}
+	</div>
 </div>

@@ -9,6 +9,10 @@
 	];
 </script>
 
+<svelte:head>
+	<title>Quizar</title>
+</svelte:head>
+
 <div class="flex h-screen w-full flex-col items-center justify-center">
 	<h1 class="mb-5 text-8xl font-bold">Quizar</h1>
 	<h2 class="italic">{quotes[Math.floor(Math.random() * quotes.length)]}</h2>

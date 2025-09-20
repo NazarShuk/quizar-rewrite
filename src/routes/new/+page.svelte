@@ -20,6 +20,10 @@
 	let creating = $state(false);
 </script>
 
+<svelte:head>
+	<title>New Set | Quizar</title>
+</svelte:head>
+
 <div class="m-auto h-full w-1/2">
 	<h1 class="text-2xl font-bold">Create Study Set</h1>
 	<form
