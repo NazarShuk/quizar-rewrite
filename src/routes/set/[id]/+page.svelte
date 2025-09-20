@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import Flashcards from './Flashcards.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -30,6 +31,8 @@
 			By <img class="rounded-full" src={set.author.image} alt="profile" />
 			{set.author.name}
 		</h2>
+
+		<Flashcards cards={set.set?.terms} />
 
 		<ul class="mt-5 flex flex-col gap-5">
 			{#each set.set?.terms as term (term.id)}
