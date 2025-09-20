@@ -9,26 +9,22 @@ datasource db {
 }
 
 model StudySet {
-  id   String @id @default(cuid())
-  name String
-
-  terms Term[]
-
-  authorId String?
-
+  id        String   @id @default(cuid())
+  name      String
+  authorId  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  terms     Term[]
 
   @@schema("new-quizar")
 }
 
 model Term {
-  id String @id @default(cuid())
-
+  id         String    @id @default(cuid())
   term       String
   definition String
-  StudySet   StudySet? @relation(fields: [studySetId], references: [id], onDelete: Cascade)
   studySetId String?
+  StudySet   StudySet? @relation(fields: [studySetId], references: [id], onDelete: Cascade)
 
   @@schema("new-quizar")
 }
