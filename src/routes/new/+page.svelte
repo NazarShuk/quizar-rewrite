@@ -24,7 +24,7 @@
 	<title>New Set | Quizar</title>
 </svelte:head>
 
-<div class="m-auto h-full w-1/2">
+<div class="m-auto h-full w-[90%] md:w-1/2">
 	<h1 class="text-2xl font-bold">Create Study Set</h1>
 	<form
 		use:enhance={() => {

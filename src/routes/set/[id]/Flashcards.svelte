@@ -15,11 +15,13 @@
 	class="mt-5 h-96"
 >
 	<Card.Content class="flex h-full w-full flex-col items-center justify-center">
-		{#if !isFlipped}
-			{cards[currentCard].term}
-		{:else}
-			{cards[currentCard].definition}
-		{/if}
+		<h1 class="text-2xl">
+			{#if !isFlipped}
+				{cards[currentCard].term}
+			{:else}
+				{cards[currentCard].definition}
+			{/if}
+		</h1>
 	</Card.Content>
 	<Card.Footer class="mt-auto flex flex-row justify-center gap-2">
 		<Button
@@ -30,6 +32,7 @@
 			}}
 			variant="ghost"><MoveLeft /></Button
 		>
+		<p>{currentCard + 1}/{cards.length}</p>
 		<Button
 			onclick={(e) => {
 				e.stopPropagation();

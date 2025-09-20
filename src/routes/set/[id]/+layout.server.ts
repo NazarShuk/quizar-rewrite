@@ -1,9 +1,9 @@
 import { prisma } from '$lib/prisma';
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 import { clerkClient } from 'svelte-clerk/server';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: LayoutServerLoad = async ({ params }) => {
 	return {
 		data: fetchSet(params.id)
 	};

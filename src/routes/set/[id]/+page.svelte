@@ -2,7 +2,9 @@
 	import type { PageProps } from './$types';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import Flashcards from './Flashcards.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let { data }: PageProps = $props();
 </script>
@@ -13,7 +15,7 @@
 	{/await}
 </svelte:head>
 
-<div class="m-auto h-full w-1/2">
+<div class="m-auto h-full w-[90%] md:w-1/2">
 	{#await data.data}
 		<Skeleton class="h-8 w-1/4" />
 		<Skeleton class="mt-1 h-6 w-1/6" />
@@ -32,7 +34,15 @@
 			{set.author.name}
 		</h2>
 
-		<Flashcards cards={set.set?.terms} />
+		<div class="mt-5 mr-auto ml-auto flex h-24 w-full flex-row justify-center gap-2">
+			<Button
+				onclick={() => goto(resolve(`/set/${set.set.id}/flashcards`))}
+				variant="outline"
+				class="h-full w-full shrink">Flashcards</Button
+			>
+			<Button variant="outline" class="h-full w-full shrink">Learn</Button>
+			<Button variant="outline" class="h-full w-full shrink">Test</Button>
+		</div>
 
 		<ul class="mt-5 flex flex-col gap-5">
 			{#each set.set?.terms as term (term.id)}
