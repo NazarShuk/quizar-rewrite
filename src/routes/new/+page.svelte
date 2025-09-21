@@ -4,16 +4,20 @@
 	import * as Card from '$lib/components/ui/card';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import { Trash } from 'lucide-svelte';
+	import { dndzone } from 'svelte-dnd-action';
 
 	interface Card {
 		term: string;
 		definition: string;
+		id: string;
 	}
 
 	let cards: Card[] = $state([
 		{
 			term: 'term',
-			definition: 'definition'
+			definition: 'definition',
+			id: crypto.randomUUID()
 		}
 	]);
 	let jsonCards = $derived(JSON.stringify(cards));
@@ -74,31 +78,36 @@
 		<Textarea name="prompt" placeholder="Describe your study set" />
 		<Button type="submit" disabled={creating}>AI Generate</Button>
 	</form>
-	<div class="mt-5 flex flex-col gap-5">
-		{#each cards as card, i (i)}
+	<section
+		class="mt-5 flex flex-col gap-5"
+		use:dndzone={{ items: cards, flipDurationMs: 100, dropTargetStyle: {} }}
+		onconsider={(e) => (cards = e.detail.items)}
+		onfinalize={(e) => (cards = e.detail.items)}
+	>
+		{#each cards as card, i (card.id)}
 			<Card.Root class="gap-1">
-				<Card.Header>
-					<Card.Action>
-						<Button variant="destructive" onclick={() => cards.splice(i, 1)}>Delete</Button>
-					</Card.Action>
-				</Card.Header>
-				<Card.Content class="flex flex-col gap-1">
-					<Input minlength={1} maxlength={512} bind:value={card.term} placeholder="Term" />
-					<Input
-						minlength={1}
-						maxlength={512}
-						bind:value={card.definition}
-						placeholder="Definition"
-					/>
+				<Card.Content class="flex flex-row gap-1">
+					<div class="flex w-full flex-row gap-1">
+						<Textarea minlength={1} maxlength={512} bind:value={card.term} placeholder="Term" />
+						<Textarea
+							minlength={1}
+							maxlength={512}
+							bind:value={card.definition}
+							placeholder="Definition"
+							class="h-24"
+						/>
+					</div>
+					<div class="flex h-full w-fit flex-col justify-between">
+						<Button variant="ghost" onclick={() => cards.splice(i, 1)}><Trash /></Button>
+					</div>
 				</Card.Content>
 			</Card.Root>
 		{/each}
-
-		<Button
-			class="m-auto w-fit"
-			onclick={() => {
-				cards = [...cards, { term: '', definition: '' }];
-			}}>Add Card</Button
-		>
-	</div>
+	</section>
+	<Button
+		class="mt-5 mr-auto ml-auto w-fit"
+		onclick={() => {
+			cards = [...cards, { term: '', definition: '', id: crypto.randomUUID() }];
+		}}>Add Card</Button
+	>
 </div>

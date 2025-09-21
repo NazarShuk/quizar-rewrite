@@ -48,6 +48,7 @@
 		"mime": "^4.1.0",
 		"mode-watcher": "^1.1.0",
 		"svelte-clerk": "^0.17.2",
+		"svelte-dnd-action": "^0.9.65",
 		"zod": "^4.1.9"
 	}
 }
