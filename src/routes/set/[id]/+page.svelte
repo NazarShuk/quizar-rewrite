@@ -15,7 +15,7 @@
 	{/await}
 </svelte:head>
 
-<div class="m-auto h-full w-[90%] md:w-1/2">
+<div class="m-auto h-full w-[90%] lg:w-1/2">
 	{#await data.data}
 		<Skeleton class="h-8 w-1/4" />
 		<Skeleton class="mt-1 h-6 w-1/6" />

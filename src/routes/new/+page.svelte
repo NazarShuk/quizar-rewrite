@@ -4,7 +4,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { Trash } from 'lucide-svelte';
+	import Trash from 'lucide-svelte/icons/trash';
 	import { dndzone } from 'svelte-dnd-action';
 
 	interface Card {
@@ -29,7 +29,7 @@
 	<title>New Set | Quizar</title>
 </svelte:head>
 
-<div class="m-auto h-full w-[90%] md:w-1/2">
+<div class="m-auto h-full w-[90%] lg:w-1/2">
 	<h1 class="text-2xl font-bold">Create Study Set</h1>
 	<form
 		use:enhance={() => {

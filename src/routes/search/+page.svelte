@@ -22,7 +22,7 @@
 	<title>Search | Quizar</title>
 </svelte:head>
 
-<div class="m-auto h-full w-[90%] md:w-1/2">
+<div class="m-auto h-full w-[90%] lg:w-1/2">
 	<h1 class="text-2xl font-bold">Search</h1>
 
 	<form class="flex w-full flex-row gap-5" onsubmit={handleSubmit}>

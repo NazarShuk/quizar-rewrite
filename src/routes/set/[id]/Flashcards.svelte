@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index';
-	import { MoveLeft, MoveRight } from 'lucide-svelte';
+	import MoveLeft from 'lucide-svelte/icons/move-left';
+	import MoveRight from 'lucide-svelte/icons/move-right';
 
 	const { cards }: { cards: { term: string; definition: string }[] } = $props();
 	let currentCard = $state(0);

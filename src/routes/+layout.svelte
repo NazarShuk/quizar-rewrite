@@ -4,7 +4,8 @@
 	import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from 'svelte-clerk';
 	import { ModeWatcher, toggleMode, mode } from 'mode-watcher';
 	import { resolve } from '$app/paths';
-	import { Moon, Sun } from 'lucide-svelte';
+	import Moon from 'lucide-svelte/icons/moon';
+	import Sun from 'lucide-svelte/icons/sun';
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	let { children } = $props();
