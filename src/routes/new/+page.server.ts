@@ -134,7 +134,7 @@ export const actions = {
 		});
 		console.log(response.text);
 		const cards = JSON.parse(response.text || '[]');
-		for (const card of cards) {
+		for (const card of cards.cards) {
 			card.id = crypto.randomUUID();
 		}
 		return { success: true, cards };
