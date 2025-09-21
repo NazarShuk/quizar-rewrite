@@ -40,7 +40,11 @@
 				variant="outline"
 				class="h-full w-full shrink">Flashcards</Button
 			>
-			<Button variant="outline" class="h-full w-full shrink">Learn</Button>
+			<Button
+				onclick={() => goto(resolve(`/set/${set.set.id}/learn`))}
+				variant="outline"
+				class="h-full w-full shrink">Learn</Button
+			>
 			<Button variant="outline" class="h-full w-full shrink">Test</Button>
 		</div>
 

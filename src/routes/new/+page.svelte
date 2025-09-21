@@ -3,6 +3,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import Input from '$lib/components/ui/input/input.svelte';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
 	interface Card {
 		term: string;
@@ -37,6 +38,7 @@
 		}}
 		method="POST"
 		class="mt-1 flex w-full flex-row gap-5"
+		action="?/new"
 	>
 		<Input
 			type="text"
@@ -50,6 +52,27 @@
 		<Button type="submit" disabled={creating}>
 			{creating ? 'Loading...' : 'Create'}
 		</Button>
+	</form>
+	<p class="text-center opacity-50">-- Or --</p>
+	<form
+		use:enhance={() => {
+			creating = true;
+
+			return async ({ update, result }) => {
+				await update();
+				creating = false;
+				if (result.type === 'success') {
+					const data = result.data?.cards as { cards: Card[] };
+					cards = data.cards;
+				}
+			};
+		}}
+		action="?/generate"
+		method="POST"
+		class="mt-1 flex w-full flex-row gap-5"
+	>
+		<Textarea name="prompt" placeholder="Describe your study set" />
+		<Button type="submit" disabled={creating}>AI Generate</Button>
 	</form>
 	<div class="mt-5 flex flex-col gap-5">
 		{#each cards as card, i (i)}
