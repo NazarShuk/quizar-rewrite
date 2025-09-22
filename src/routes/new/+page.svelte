@@ -73,10 +73,10 @@
 		}}
 		action="?/generate"
 		method="POST"
-		class="mt-1 flex w-full flex-row gap-5"
+		class="mt-1 flex w-full flex-row items-center gap-5"
 	>
 		<Textarea name="prompt" placeholder="Describe your study set" />
-		<Button type="submit" disabled={creating}>AI Generate</Button>
+		<Button class="h-full shrink" type="submit" disabled={creating}>AI Generate</Button>
 	</form>
 	<section
 		class="mt-5 flex flex-col gap-5"
