@@ -41,13 +41,18 @@
 				<Skeleton class="h-24 w-full" />
 			{/each}
 		{:then sets}
-			{#each sets as set (set.id)}
-				<Card.Root class="cursor-pointer" onclick={() => goto(resolve(`/set/${set.id}`))}>
-					<Card.Header>
-						<Card.Title>{set.name}</Card.Title>
-						<Card.Description>By {set.authorId}</Card.Description>
-					</Card.Header>
-				</Card.Root>
+			{#each sets as s, i (i)}
+				{#await s then set}
+					<Card.Root class="cursor-pointer" onclick={() => goto(resolve(`/set/${set.id}`))}>
+						<Card.Header>
+							<Card.Title>{set.name}</Card.Title>
+							<Card.Description class="flex flex-row items-center gap-1">
+								By <img class="h-6 w-6 rounded-full" src={set.author.image} alt="profile" />
+								{set.author.username}</Card.Description
+							>
+						</Card.Header>
+					</Card.Root>
+				{/await}
 			{/each}
 		{/await}
 	</div>
