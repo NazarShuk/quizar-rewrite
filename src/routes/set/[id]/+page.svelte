@@ -5,8 +5,18 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { useClerkContext } from 'svelte-clerk/client';
+	import { enhance } from '$app/forms';
+	import { toast } from 'svelte-sonner';
 
 	let { data }: PageProps = $props();
+
+	// Do not destructure context to avoid losing reactivity
+	const ctx = useClerkContext();
+
+	const userId = $derived(ctx.auth.userId);
+
+	let deleting = $state(false);
 </script>
 
 <svelte:head>
@@ -33,6 +43,25 @@
 			By <img class="rounded-full" src={set.author.image} alt="profile" />
 			{set.author.name}
 		</h2>
+		{#if set.set.authorId === userId}
+			<div class="mt-5 flex w-full flex-row gap-2">
+				<form
+					use:enhance={({}) => {
+						deleting = true;
+						return async ({ result }) => {
+							if (result.type === 'success') {
+								toast.success('Study set deleted');
+								goto(resolve('/'));
+							}
+						};
+					}}
+					action="?/delete"
+					method="POST"
+				>
+					<Button type="submit" disabled={deleting} variant="destructive">Delete</Button>
+				</form>
+			</div>
+		{/if}
 
 		<div class="mt-5 mr-auto ml-auto flex h-24 w-full flex-row justify-center gap-2">
 			<Button

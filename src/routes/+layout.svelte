@@ -7,10 +7,12 @@
 	import Moon from 'lucide-svelte/icons/moon';
 	import Sun from 'lucide-svelte/icons/sun';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { Toaster } from '$lib/components/ui/sonner/index';
 
 	let { children } = $props();
 </script>
 
+<Toaster />
 <ModeWatcher />
 
 <svelte:head>
