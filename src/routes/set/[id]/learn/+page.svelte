@@ -76,6 +76,7 @@
 	}
 
 	let showAnswers = $state(false);
+	let answeredCorrectly = $state(false);
 
 	async function answerQuestion(answer: Answer) {
 		if (!currentQuestion) return;
@@ -85,7 +86,14 @@
 			incorrectQuestions.push(currentQuestion);
 		}
 
+		answeredCorrectly = answer.correct;
+
 		showAnswers = true;
+		if (answer.correct) {
+			await new Promise((resolve) => setTimeout(resolve, 500));
+		} else {
+			await waitForSpacebar();
+		}
 		await new Promise((resolve) => setTimeout(resolve, 500));
 		showAnswers = false;
 		currentQuestion = questions.shift() ?? null;
@@ -98,6 +106,17 @@
 		currentQuestion = questions.shift() ?? null;
 		maxQuestions = questions.length;
 	}
+
+	async function waitForSpacebar() {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		return new Promise((resolve) => {
+			const listener = () => {
+				window.removeEventListener('click', listener);
+				resolve(null);
+			};
+			window.addEventListener('click', listener);
+		});
+	}
 </script>
 
 <div class="m-auto h-full w-full p-5 lg:h-[75%] lg:w-[75%]">
@@ -105,7 +124,14 @@
 		<div class="h-full w-full" in:fly={{ y: -100, delay: 500 }} out:fly={{ y: -100 }}>
 			<Progress value={maxQuestions - questions.length} max={maxQuestions + 1} class="mb-5" />
 			<Card.Root class="flex h-1/2 items-center justify-center">{currentQuestion.term}</Card.Root>
-			<div class="mt-5 flex h-1/2 flex-col gap-5 lg:flex-row">
+			<p
+				class="mt-2.5 text-center select-none {showAnswers && !answeredCorrectly
+					? 'opacity-50'
+					: 'opacity-0'}"
+			>
+				Click to continue
+			</p>
+			<div class="mt-2.5 flex h-1/2 flex-col gap-5 lg:flex-row">
 				{#each currentQuestion.answers as answer, i (i)}
 					<Button
 						variant="outline"

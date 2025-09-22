@@ -23,7 +23,17 @@ async function fetchSet(id: string) {
 		error(404, 'Study set not found');
 	}
 
-	const author = await clerkClient.users.getUser(set.authorId as string);
+	let author;
+
+	try {
+		author = await clerkClient.users.getUser(set.authorId as string);
+	} catch (e) {
+		console.log(e);
+		author = {
+			imageUrl: '',
+			username: 'Unknown'
+		};
+	}
 
 	return {
 		set,

@@ -62,5 +62,7 @@
 				</li>
 			{/each}
 		</ul>
+	{:catch}
+		<h1 class="text-2xl font-bold">Error</h1>
 	{/await}
 </div>
