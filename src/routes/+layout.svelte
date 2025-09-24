@@ -23,7 +23,7 @@
 	<div class="flex h-screen w-full flex-col">
 		<header class="mr-auto ml-auto flex h-12 w-[90%] shrink-0 items-center justify-between">
 			<div class="flex items-center gap-5">
-				<a href={resolve('/')} class="text-xl font-bold">Quizar</a>
+				<a href={resolve('/')} class="font-serif text-xl font-bold">Quizar</a>
 				<a href={resolve('/new')}>New</a>
 				<a href={resolve('/search')}>Find</a>
 			</div>

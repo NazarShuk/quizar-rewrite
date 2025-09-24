@@ -10,7 +10,7 @@
 
 <div class="flex h-screen w-full flex-col items-center justify-center">
 	<h1
-		class="mb-5 bg-gradient-to-br from-primary to-accent bg-clip-text text-8xl font-bold text-transparent"
+		class="mb-5 bg-gradient-to-br from-primary to-accent bg-clip-text font-serif text-8xl font-bold text-transparent"
 	>
 		Quizar
 	</h1>
@@ -24,9 +24,10 @@
 			Quizar is a tool to help you prepare for your upcoming quizes or tests. You can create your
 			own study sets that consist of flashcards and use different modes to study.
 		</p>
-		<p class="mt-5 text-center">
+		<p class="text-center">
 			Quizar will forever be free and open source. I believe that everyone should be allowed to
-			learn without paywalls. <span class="text-xs italic">unlike some other evil companies</span>
+			learn without paywalls. <b></b>
+			<span class="text-xs italic">unlike some other evil companies</span>
 		</p>
 		<p class="flex flex-row justify-between gap-2">
 			<a href="https://github.com/NazarShuk/quizar-rewrite" target="_blank" class="text-primary">
