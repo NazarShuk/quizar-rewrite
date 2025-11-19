@@ -8,6 +8,8 @@
 	import { dndzone } from 'svelte-dnd-action';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	interface Card {
 		term: string;
@@ -51,6 +53,29 @@
 
 <div class="m-auto h-full w-[90%] lg:w-1/2">
 	<h1 class="text-2xl font-bold">Create Study Set</h1>
+	<div class="flex flex-row items-center justify-between gap-2.5">
+		<form
+			use:enhance={() => {
+				creating = true;
+
+				return async ({ update, result }) => {
+					await update();
+					creating = false;
+					if (result.type === 'success') {
+						const data = result.data?.cards as { cards: Card[] };
+						cards = data.cards;
+					}
+				};
+			}}
+			action="?/generate"
+			method="POST"
+			class="mt-1 flex w-full flex-row items-center gap-5"
+		>
+			<Textarea name="prompt" placeholder="Describe your study set" />
+			<Button class="h-full shrink" type="submit" disabled={creating}>AI Generate</Button>
+		</form>
+		<Button onclick={() => goto(resolve('/new/import'))} class="h-full">Import...</Button>
+	</div>
 	<form
 		use:enhance={() => {
 			creating = true;
@@ -77,27 +102,7 @@
 			{creating ? 'Loading...' : 'Create'}
 		</Button>
 	</form>
-	<p class="text-center opacity-50">-- Or --</p>
-	<form
-		use:enhance={() => {
-			creating = true;
 
-			return async ({ update, result }) => {
-				await update();
-				creating = false;
-				if (result.type === 'success') {
-					const data = result.data?.cards as { cards: Card[] };
-					cards = data.cards;
-				}
-			};
-		}}
-		action="?/generate"
-		method="POST"
-		class="mt-1 flex w-full flex-row items-center gap-5"
-	>
-		<Textarea name="prompt" placeholder="Describe your study set" />
-		<Button class="h-full shrink" type="submit" disabled={creating}>AI Generate</Button>
-	</form>
 	<section
 		class="mt-5 flex flex-col gap-5"
 		use:dndzone={{ items: cards, flipDurationMs: 100, dropTargetStyle: {} }}
