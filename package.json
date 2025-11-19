@@ -45,11 +45,15 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@ghostery/adblocker-puppeteer": "^2.12.5",
 		"@google/genai": "^1.20.0",
 		"@prisma/client": "^6.16.2",
 		"lucide-svelte": "^0.544.0",
 		"mime": "^4.1.0",
 		"mode-watcher": "^1.1.0",
+		"puppeteer": "^24.30.0",
+		"puppeteer-extra": "^3.3.6",
+		"puppeteer-extra-plugin-stealth": "^2.11.2",
 		"svelte-clerk": "^0.17.2",
 		"svelte-dnd-action": "^0.9.65",
 		"zod": "^4.1.9"
