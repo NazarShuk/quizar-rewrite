@@ -21,6 +21,7 @@
 		const res = await fetch('/new/import', { method: 'POST', body: JSON.stringify({ url }) });
 		if (!res.body || !res.ok) {
 			toast.error(`Failed to import a set. Try again later? ${res.status} `);
+			importing = false;
 			return;
 		}
 

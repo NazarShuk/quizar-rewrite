@@ -14,6 +14,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return error(400);
 	}
 
+	if (!verifyUrl(body.url)) {
+		return error(400);
+	}
+
 	const stream = new ReadableStream({
 		async start(controller) {
 			try {
@@ -97,6 +101,18 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		}
 	});
 };
+
+function verifyUrl(url: string) {
+	try {
+		new URL(url);
+		// eslint-disable-next-line
+	} catch (e) {
+		return false;
+	}
+	// check if url is quizlet using regex
+	const quizletRegex = /https:\/\/quizlet\.com\/[a-zA-Z0-9]+/;
+	return quizletRegex.test(url);
+}
 
 type SSEMessage =
 	| { type: 'info'; info: string }
