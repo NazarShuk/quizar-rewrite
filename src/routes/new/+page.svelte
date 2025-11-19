@@ -6,6 +6,8 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import Trash from 'lucide-svelte/icons/trash';
 	import { dndzone } from 'svelte-dnd-action';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	interface Card {
 		term: string;
@@ -23,6 +25,24 @@
 	let jsonCards = $derived(JSON.stringify(cards));
 
 	let creating = $state(false);
+	onMount(() => {
+		const state = $page.state as
+			| { importedTerms: { term: string; definition: string }[] }
+			| undefined;
+
+		if (state?.importedTerms && state.importedTerms.length > 0) {
+			const imported = state.importedTerms;
+			console.log('Imported terms', imported);
+			cards = [];
+			for (const term of imported) {
+				cards.push({
+					term: term.term,
+					definition: term.definition,
+					id: crypto.randomUUID()
+				});
+			}
+		}
+	});
 </script>
 
 <svelte:head>

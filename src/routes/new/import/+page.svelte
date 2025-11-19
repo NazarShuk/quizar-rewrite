@@ -1,24 +1,28 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input';
-	import Progress from '$lib/components/ui/progress/progress.svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
 	let url = $state('');
 
 	let importing = $state(false);
-	let progress = $state(0);
 	let status = $state('This can take a while...');
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
-		const res = await fetch('/new/import', { method: 'POST' });
+		if (importing || !url) {
+			return;
+		}
+		importing = true;
+		const res = await fetch('/new/import', { method: 'POST', body: JSON.stringify({ url }) });
 		if (!res.body || !res.ok) {
 			toast.error(`Failed to import a set. Try again later? ${res.status} `);
 			return;
 		}
-		importing = true;
 
 		const reader = res.body.getReader();
 		const decoder = new TextDecoder();
@@ -39,9 +43,30 @@
 					const json = chunk.replace(/^data:\s*/, '');
 					try {
 						const obj = JSON.parse(json);
-						status = obj.msg;
-						progress += 0.1;
-					} catch {}
+
+						switch (obj.type) {
+							case 'info':
+								status = obj.info;
+								break;
+							case 'success':
+								status = 'Imported!';
+
+								goto(resolve('/new/'), {
+									state: {
+										importedTerms: obj.data.cards
+									}
+								});
+
+								break;
+							case 'error':
+								status = 'This can take a while...';
+								importing = false;
+								toast.error(`Failed to import a set. Try again later?`);
+								break;
+						}
+					} catch {
+						console.error('Failed to parse JSON');
+					}
 				}
 			}
 		}
@@ -54,8 +79,9 @@
 		in:fade
 	>
 		<h1 class="text-2xl font-bold">Your set is being imported</h1>
+		<LoaderCircle class="mt-2.5 animate-spin" />
+
 		<h2>{status}</h2>
-		<Progress value={progress} max={1} min={0} class="mt-2.5 w-64" />
 	</div>
 {/if}
 
@@ -65,6 +91,6 @@
 
 	<form class="mt-5 flex flex-row gap-2.5" onsubmit={handleSubmit}>
 		<Input required bind:value={url} type="url" placeholder="URL" />
-		<Button type="submit">Import</Button>
+		<Button disabled={importing} type="submit">Import</Button>
 	</form>
 </div>
