@@ -3,6 +3,7 @@
 	import * as Card from '$lib/components/ui/card/index';
 	import MoveLeft from 'lucide-svelte/icons/move-left';
 	import MoveRight from 'lucide-svelte/icons/move-right';
+	import { onMount } from 'svelte';
 
 	const { cards }: { cards: { term: string; definition: string }[] } = $props();
 	let currentCard = $state(0);
@@ -10,6 +11,9 @@
 	let cardText = $state("")
 	
 	let previousFlip = false
+	onMount(()=>{
+		cardText = cards[currentCard].term
+	})
 	async function changeCardText(){
 		if (previousFlip != isFlipped){
 			await new Promise((resolve)=> setTimeout(resolve, (250 / 2) - 5))
