@@ -1,7 +1,6 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { PuppeteerBlocker } from '@ghostery/adblocker-puppeteer';
 import Chromium from '@sparticuz/chromium';
 
 import 'puppeteer-extra-plugin-stealth/evasions/chrome.app';
@@ -24,6 +23,8 @@ import 'puppeteer-extra-plugin-stealth/evasions/window.outerdimensions';
 import 'puppeteer-extra-plugin-user-preferences';
 import 'puppeteer-extra-plugin-user-data-dir';
 
+puppeteer.use(StealthPlugin());
+
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const { userId } = locals.auth();
 	if (!userId) {
@@ -42,22 +43,65 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	const stream = new ReadableStream({
 		async start(controller) {
 			try {
-				puppeteer.use(StealthPlugin());
 				const browser = await puppeteer.launch({
 					headless: true,
 					executablePath: await Chromium.executablePath(),
-					args: Chromium.args
+					args: [...Chromium.args, '--disable-blink-features=AutomationControlled']
 				});
 
 				const page = await browser.newPage();
-				const blocker = await PuppeteerBlocker.fromPrebuiltAdsAndTracking(fetch);
-				await blocker.enableBlockingInPage(page);
+
+				await page.setExtraHTTPHeaders({
+					'Accept-Language': 'en-US,en;q=0.9',
+					Accept:
+						'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+					'Sec-Fetch-Dest': 'document',
+					'Sec-Fetch-Mode': 'navigate',
+					'Sec-Fetch-Site': 'none',
+					'Sec-Ch-Ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+					'Sec-Ch-Ua-Mobile': '?0',
+					'Sec-Ch-Ua-Platform': '"Windows"'
+				});
+
+				await page.evaluateOnNewDocument(() => {
+					Object.defineProperty(navigator, 'userAgent', {
+						get: () =>
+							'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+					});
+				});
+
+				await page.setViewport({
+					width: 1920,
+					height: 1080
+				});
 
 				sendMessage(controller, { type: 'info', info: 'Navigating to Quizlet' });
 				await page.goto(body.url, { waitUntil: 'domcontentloaded' });
 
 				sendMessage(controller, { type: 'info', info: 'Waiting for the site to load' });
-				await page.waitForSelector("section[data-testid='terms-list']");
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				const isCaptcha = await page.$('div[class="cloudflare-area"]');
+
+				if (isCaptcha) {
+					console.log('CAPTCHA triggered');
+					console.log(await page.evaluate(() => document.body.innerHTML));
+					sendMessage(controller, { type: 'error', error: 'Captcha detected' });
+					controller.close();
+					browser.close();
+					return;
+				}
+
+				try {
+					await page.waitForSelector("section[data-testid='terms-list']");
+				} catch (e) {
+					console.log('No terms list found');
+					console.log(await page.evaluate(() => document.body.innerHTML));
+					sendMessage(controller, { type: 'error', error: 'No terms list found' });
+					controller.close();
+					browser.close();
+					return;
+				}
 				sendMessage(controller, { type: 'info', info: 'Importing the set' });
 
 				let isSeeingAllTerms = false;

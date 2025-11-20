@@ -62,7 +62,11 @@
 							case 'error':
 								status = 'This can take a while...';
 								importing = false;
-								toast.error(`Failed to import a set. Try again later?`);
+								if (typeof obj.error === 'string') {
+									toast.error(`Failed to import a set. ${obj.error}. Try again later?`);
+								} else {
+									toast.error(`Failed to import a set. Try again later?`);
+								}
 								break;
 						}
 					} catch {
@@ -73,6 +77,10 @@
 		}
 	}
 </script>
+
+<svelte:head>
+	<title>Import | Quizar</title>
+</svelte:head>
 
 {#if importing}
 	<div
