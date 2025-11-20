@@ -16,7 +16,7 @@
 <div class=" m-auto flex h-screen w-[90%] flex-col lg:w-1/2">
 	<h1 class="text-2xl font-bold">Home</h1>
 	<div class="mb-5 flex w-full flex-row">
-		<Button class="w-full" variant="outline">Create new set</Button>
+		<Button class="w-full" variant="outline" onclick={()=>goto(resolve("/new"))}>Create new set</Button>
 	</div>
 
 	<h2 class="text-xl font-semibold">Your sets</h2>
