@@ -64,17 +64,19 @@
 		{/if}
 
 		<div class="mt-5 mr-auto ml-auto flex h-24 w-full flex-row justify-center gap-2">
-			<Button
-				onclick={() => goto(resolve(`/set/${set.set.id}/flashcards`))}
-				variant="outline"
-				class="h-full w-full shrink">Flashcards</Button
-			>
-			<Button
-				onclick={() => goto(resolve(`/set/${set.set.id}/learn`))}
-				variant="outline"
-				class="h-full w-full shrink">Learn</Button
-			>
-			<Button variant="outline" class="h-full w-full shrink">Test</Button>
+			<a class="w-full h-full" href={resolve(`/set/${set.set.id}/flashcards`)}>
+				<Button
+					variant="outline"
+					class="h-full w-full shrink">Flashcards</Button
+				>
+			</a>
+
+			<a class="w-full h-full" href={resolve(`/set/${set.set.id}/learn`)}>
+				<Button
+					variant="outline"
+					class="h-full w-full shrink">Learn</Button
+				>
+			</a>
 		</div>
 
 		<ul class="mt-5 flex flex-col gap-5">

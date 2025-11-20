@@ -43,7 +43,8 @@
 		{:then sets}
 			{#each sets as s, i (i)}
 				{#await s then set}
-					<Card.Root class="cursor-pointer" onclick={() => goto(resolve(`/set/${set.id}`))}>
+					<a href={resolve(`/set/${set.id}`)}>
+					<Card.Root class="cursor-pointer">
 						<Card.Header>
 							<Card.Title>{set.name}</Card.Title>
 							<Card.Description class="flex flex-row items-center gap-1">
@@ -52,6 +53,8 @@
 							>
 						</Card.Header>
 					</Card.Root>
+					</a>
+
 				{/await}
 			{/each}
 		{/await}

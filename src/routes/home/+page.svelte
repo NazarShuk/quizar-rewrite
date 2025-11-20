@@ -16,7 +16,9 @@
 <div class=" m-auto flex h-screen w-[90%] flex-col lg:w-1/2">
 	<h1 class="text-2xl font-bold">Home</h1>
 	<div class="mb-5 flex w-full flex-row">
-		<Button class="w-full" variant="outline" onclick={()=>goto(resolve("/new"))}>Create new set</Button>
+		<a href={resolve('/new')}>
+		<Button class="w-full" variant="outline">Create new set</Button></a>
+	
 	</div>
 
 	<h2 class="text-xl font-semibold">Your sets</h2>
@@ -33,18 +35,20 @@
 		{/if}
 		<div class="grid grid-flow-row-dense grid-cols-2 grid-rows-5 gap-4">
 			{#each sets as set (set.id)}
-				<Card.Root
-					class="h-24 w-full cursor-pointer"
-					onclick={() => goto(resolve(`/set/${set.id}`))}
-				>
-					<Card.Header>
-						<Card.Title>{set.name}</Card.Title>
-						<Card.Description class="line-clamp-3">
-							{set._count.terms}
-							{set._count.terms === 1 ? 'term' : 'terms'}
-						</Card.Description>
-					</Card.Header>
-				</Card.Root>
+				<a class="w-full h-24" href={resolve(`/set/${set.id}`)}>
+					<Card.Root
+						class="h-24 w-full cursor-pointer"
+						onclick={() => goto(resolve(`/set/${set.id}`))}
+					>
+						<Card.Header>
+							<Card.Title>{set.name}</Card.Title>
+							<Card.Description class="line-clamp-3">
+								{set._count.terms}
+								{set._count.terms === 1 ? 'term' : 'terms'}
+							</Card.Description>
+						</Card.Header>
+					</Card.Root>
+				</a>
 			{/each}
 		</div>
 	{/await}

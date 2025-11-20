@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { resolve } from '$app/paths';
 </script>
@@ -16,8 +15,12 @@
 	</h1>
 
 	<div class="flex flex-row gap-4">
-		<Button onclick={() => goto(resolve('/search'))}>Explore Study Sets</Button>
-		<Button onclick={() => goto(resolve('/new'))}>Make your own</Button>
+		<a href={resolve('/search')}>
+			<Button>Explore Study Sets</Button>
+		</a>
+		<a href={resolve('/new')}>
+			<Button>Make your own</Button>
+		</a>
 	</div>
 	<div class="mt-10 h-fit w-[90%] lg:w-[50%]">
 		<p class="text-center">
