@@ -2,6 +2,27 @@ import { error, type RequestHandler } from '@sveltejs/kit';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { PuppeteerBlocker } from '@ghostery/adblocker-puppeteer';
+import Chromium from '@sparticuz/chromium';
+
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.app';
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.csi';
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes';
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.runtime';
+import 'puppeteer-extra-plugin-stealth/evasions/defaultArgs';
+import 'puppeteer-extra-plugin-stealth/evasions/iframe.contentWindow';
+import 'puppeteer-extra-plugin-stealth/evasions/media.codecs';
+import 'puppeteer-extra-plugin-stealth/evasions/navigator.hardwareConcurrency';
+import 'puppeteer-extra-plugin-stealth/evasions/navigator.languages';
+import 'puppeteer-extra-plugin-stealth/evasions/navigator.permissions';
+import 'puppeteer-extra-plugin-stealth/evasions/navigator.plugins';
+import 'puppeteer-extra-plugin-stealth/evasions/navigator.vendor';
+import 'puppeteer-extra-plugin-stealth/evasions/navigator.webdriver';
+import 'puppeteer-extra-plugin-stealth/evasions/sourceurl';
+import 'puppeteer-extra-plugin-stealth/evasions/user-agent-override';
+import 'puppeteer-extra-plugin-stealth/evasions/webgl.vendor';
+import 'puppeteer-extra-plugin-stealth/evasions/window.outerdimensions';
+import 'puppeteer-extra-plugin-user-preferences';
+import 'puppeteer-extra-plugin-user-data-dir';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const { userId } = locals.auth();
@@ -22,7 +43,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		async start(controller) {
 			try {
 				puppeteer.use(StealthPlugin());
-				const browser = await puppeteer.launch({ headless: true });
+				const browser = await puppeteer.launch({
+					headless: true,
+					executablePath: await Chromium.executablePath(),
+					args: Chromium.args
+				});
 
 				const page = await browser.newPage();
 				const blocker = await PuppeteerBlocker.fromPrebuiltAdsAndTracking(fetch);
