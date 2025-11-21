@@ -123,7 +123,9 @@
 	{#if currentQuestion}
 		<div class="h-full w-full" in:fly={{ y: -100, delay: 500 }} out:fly={{ y: -100 }}>
 			<Progress value={maxQuestions - questions.length} max={maxQuestions + 1} class="mb-5" />
-			<Card.Root class="flex h-1/2 items-center justify-center">{currentQuestion.term}</Card.Root>
+			<Card.Root class="flex h-1/2 items-center justify-center p-1 whitespace-pre-wrap"
+				>{currentQuestion.term}</Card.Root
+			>
 			<p
 				class="mt-2.5 text-center select-none {showAnswers && !answeredCorrectly
 					? 'opacity-50'

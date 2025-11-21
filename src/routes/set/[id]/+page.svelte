@@ -64,22 +64,16 @@
 		{/if}
 
 		<div class="mt-5 mr-auto ml-auto flex h-24 w-full flex-row justify-center gap-2">
-			<a class="w-full h-full" href={resolve(`/set/${set.set.id}/flashcards`)}>
-				<Button
-					variant="outline"
-					class="h-full w-full shrink">Flashcards</Button
-				>
+			<a class="h-full w-full" href={resolve(`/set/${set.set.id}/flashcards`)}>
+				<Button variant="outline" class="h-full w-full shrink">Flashcards</Button>
 			</a>
 
-			<a class="w-full h-full" href={resolve(`/set/${set.set.id}/learn`)}>
-				<Button
-					variant="outline"
-					class="h-full w-full shrink">Learn</Button
-				>
+			<a class="h-full w-full" href={resolve(`/set/${set.set.id}/learn`)}>
+				<Button variant="outline" class="h-full w-full shrink">Learn</Button>
 			</a>
 		</div>
 
-		<ul class="mt-5 flex flex-col gap-5">
+		<ul class="mt-5 flex flex-col gap-5 whitespace-pre-wrap">
 			{#each set.set?.terms as term (term.id)}
 				<li>
 					<Card.Root>
