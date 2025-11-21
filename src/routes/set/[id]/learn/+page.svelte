@@ -25,6 +25,8 @@
 	let maxQuestions = $state(0);
 
 	let incorrectQuestions: Question[] = $state([]);
+	let questionsSinceCheckpoint = $state(0);
+	let repeatingIncorrectQuestions = $state(false);
 
 	onMount(async () => {
 		terms = (await data.data).set.terms;
@@ -38,40 +40,56 @@
 			[terms[i], terms[j]] = [terms[j], terms[i]];
 		}
 
+		let isABCD = checkForABCD(terms);
 		// generate questions
 		for (let i = 0; i < terms.length; i++) {
-			questions.push({
-				term: terms[i].term,
-				answers: [
-					{
-						definition: terms[i].definition,
-						correct: true
-					}
-				]
-			});
-			// add random answers
-			for (let j = 0; j < 3; j++) {
-				let randomIndex = Math.floor(Math.random() * terms.length);
-				while (randomIndex === i) {
-					randomIndex = Math.floor(Math.random() * terms.length);
-				}
-				questions[i].answers.push({
-					definition: terms[randomIndex].definition,
-					correct: false
+			if (!isABCD) {
+				questions.push({
+					term: terms[i].term,
+					answers: [
+						{
+							definition: terms[i].definition,
+							correct: true
+						}
+					]
 				});
-			}
 
-			// shuffle answers
-			for (let j = questions[i].answers.length - 1; j > 0; j--) {
-				const k = Math.floor(Math.random() * (j + 1));
-				[questions[i].answers[j], questions[i].answers[k]] = [
-					questions[i].answers[k],
-					questions[i].answers[j]
-				];
+				// add random answers
+				for (let j = 0; j < 3; j++) {
+					let randomIndex = Math.floor(Math.random() * terms.length);
+					while (randomIndex === i) {
+						randomIndex = Math.floor(Math.random() * terms.length);
+					}
+					questions[i].answers.push({
+						definition: terms[randomIndex].definition,
+						correct: false
+					});
+				}
+
+				// shuffle answers
+				for (let j = questions[i].answers.length - 1; j > 0; j--) {
+					const k = Math.floor(Math.random() * (j + 1));
+					[questions[i].answers[j], questions[i].answers[k]] = [
+						questions[i].answers[k],
+						questions[i].answers[j]
+					];
+				}
+			} else {
+				questions.push({
+					term: terms[i].term,
+					answers: []
+				});
+				const qIndex = questions.length - 1;
+				'ABCD'.split('').forEach((letter) => {
+					questions[qIndex].answers.push({
+						definition: letter,
+						correct: letter.toLowerCase() === terms[i].definition.toLowerCase()
+					});
+				});
 			}
 		}
 		currentQuestion = questions.shift() ?? null;
-		maxQuestions = questions.length;
+		maxQuestions = questions.length + 1;
 		incorrectQuestions = [];
 	}
 
@@ -83,7 +101,9 @@
 		if (showAnswers) return;
 
 		if (!answer.correct) {
-			incorrectQuestions.push(currentQuestion);
+			if (!repeatingIncorrectQuestions) {
+				incorrectQuestions.push({ ...currentQuestion });
+			}
 		}
 
 		answeredCorrectly = answer.correct;
@@ -96,15 +116,32 @@
 		}
 		await new Promise((resolve) => setTimeout(resolve, 500));
 		showAnswers = false;
-		currentQuestion = questions.shift() ?? null;
+		if (!repeatingIncorrectQuestions) {
+			questionsSinceCheckpoint++;
+			currentQuestion = questions.shift() ?? null;
+		} else {
+			currentQuestion = incorrectQuestions.shift() ?? null;
+			if (currentQuestion === null) {
+				repeatingIncorrectQuestions = false;
+			}
+		}
+
+		if (
+			questionsSinceCheckpoint >= 10 &&
+			currentQuestion !== null &&
+			!repeatingIncorrectQuestions
+		) {
+			questions.unshift(currentQuestion);
+			currentQuestion = null;
+			questionsSinceCheckpoint = 0;
+		}
 	}
 
 	function handleRepeat() {
 		if (incorrectQuestions.length === 0) return;
-		questions = questions.concat(incorrectQuestions);
-		incorrectQuestions = [];
-		currentQuestion = questions.shift() ?? null;
-		maxQuestions = questions.length;
+		repeatingIncorrectQuestions = true;
+
+		currentQuestion = incorrectQuestions.shift() ?? null;
 	}
 
 	async function waitForSpacebar() {
@@ -117,12 +154,37 @@
 			window.addEventListener('click', listener);
 		});
 	}
+	function checkForABCD(terms: { term: string; definition: string }[]) {
+		let isABCD = true;
+		for (let i = 0; i < terms.length; i++) {
+			if (!'abcd'.includes(terms[i].definition.toLowerCase())) {
+				isABCD = false;
+				break;
+			}
+		}
+		return isABCD;
+	}
 </script>
 
 <div class="m-auto h-full w-full p-5 lg:h-[75%] lg:w-[75%]">
 	{#if currentQuestion}
 		<div class="h-full w-full" in:fly={{ y: -100, delay: 500 }} out:fly={{ y: -100 }}>
-			<Progress value={maxQuestions - questions.length} max={maxQuestions + 1} class="mb-5" />
+			{#if repeatingIncorrectQuestions}
+				<h1 class="mb-2.5 text-center text-primary">
+					Repeating incorrect questions ({incorrectQuestions.length + 1} left)
+				</h1>
+			{:else}
+				<div class="mb-5 flex w-full flex-row items-center justify-between gap-2.5">
+					{#each Array.from({ length: Math.round(maxQuestions / 10) }), i (i)}
+						<Progress
+							value={Math.min(10, Math.max(0, maxQuestions - questions.length - i * 10))}
+							max={10}
+							class="w-full shrink"
+						/>
+					{/each}
+				</div>
+			{/if}
+
 			<Card.Root class="flex h-1/2 items-center justify-center p-1 whitespace-pre-wrap"
 				>{currentQuestion.term}</Card.Root
 			>
@@ -147,19 +209,36 @@
 				{/each}
 			</div>
 		</div>
-	{:else if questions.length === 0 && terms.length > 0}
+	{:else if terms.length > 0}
 		<div class="h-full w-full" in:fly={{ y: 100, delay: 500 }} out:fly={{ y: 100 }}>
 			<Card.Root class="h-full w-full overflow-y-auto">
 				<Card.Header>
-					<Card.Title>This session is finished</Card.Title>
+					<Card.Title
+						>{questions.length > 0 ? 'Checkpoint reached' : 'This session is finished'}</Card.Title
+					>
 					{#if incorrectQuestions.length > 0}
 						<Card.Description>
 							{incorrectQuestions.length} question{incorrectQuestions.length === 1 ? '' : 's'}
 							{incorrectQuestions.length === 1 ? 'was' : 'were'} incorrect
 						</Card.Description>
-						<Button class="mb-5" onclick={handleRepeat}>Repeat incorrect questions</Button>
+						<div class="flex w-full flex-row gap-2.5">
+							<Button class="mb-5" onclick={handleRepeat}>Repeat incorrect questions</Button>
+						</div>
 					{:else}
 						<Card.Description>You answered all questions correctly!</Card.Description>
+					{/if}
+					{#if questions.length > 0}
+						<Button
+							class="mb-2.5"
+							onclick={() => {
+								currentQuestion = questions.shift() ?? null;
+								questionsSinceCheckpoint = 0;
+							}}
+						>
+							Continue ({questions.length} left)
+						</Button>
+					{/if}
+					{#if questions.length === 0}
 						<Button class="mt-5" onclick={termsToQuestions}>Repeat this session</Button>
 					{/if}
 				</Card.Header>
