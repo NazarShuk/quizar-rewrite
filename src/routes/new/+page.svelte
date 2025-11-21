@@ -5,7 +5,9 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import Trash from 'lucide-svelte/icons/trash';
+	import { onMount } from 'svelte';
 	import { dndzone } from 'svelte-dnd-action';
+	import { toast } from 'svelte-sonner';
 
 	interface Card {
 		term: string;
@@ -23,6 +25,37 @@
 	let jsonCards = $derived(JSON.stringify(cards));
 
 	let creating = $state(false);
+
+	// super secret developer mode
+	let previousKeys: string[] = [];
+	let devMode = $state(false);
+	let jsonInput = $state('');
+	onMount(() => {
+		document.onkeydown = async (e) => {
+			previousKeys.push(e.key);
+			if (previousKeys.length > 8) {
+				previousKeys.shift();
+			}
+			const konami = [
+				'ArrowUp',
+				'ArrowUp',
+				'ArrowDown',
+				'ArrowDown',
+				'ArrowLeft',
+				'ArrowRight',
+				'ArrowLeft',
+				'ArrowRight'
+			];
+			const lastKeys = previousKeys.slice(-konami.length);
+			if (lastKeys.length === konami.length && lastKeys.every((k, i) => k === konami[i])) {
+				devMode = !devMode;
+				toast.info(`super secret developer mode ${devMode ? 'enabled' : 'disabled'}`);
+			}
+		};
+		return () => {
+			document.onkeydown = null;
+		};
+	});
 </script>
 
 <svelte:head>
@@ -78,6 +111,24 @@
 		<Textarea name="prompt" placeholder="Describe your study set" />
 		<Button class="h-full shrink" type="submit" disabled={creating}>AI Generate</Button>
 	</form>
+	{#if devMode}
+		<div class="mt-1 flex w-full flex-row items-center gap-5">
+			<Textarea name="prompt" placeholder="JSON" bind:value={jsonInput} />
+			<Button
+				onclick={() => {
+					try {
+						cards = JSON.parse(jsonInput);
+						jsonInput = '';
+					} catch (e) {
+						toast.error(JSON.stringify(e));
+					}
+				}}
+				class="h-full shrink"
+				type="submit"
+				disabled={creating}>Paste JSON</Button
+			>
+		</div>
+	{/if}
 	<section
 		class="mt-5 flex flex-col gap-5"
 		use:dndzone={{ items: cards, flipDurationMs: 100, dropTargetStyle: {} }}
