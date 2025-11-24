@@ -99,7 +99,7 @@
 				await update();
 				creating = false;
 				if (result.type === 'success') {
-					const data = result.data?.cards as { cards: Card[] };
+					const data = result.data as { success: boolean; cards: Card[] };
 					cards = data.cards;
 				}
 			};

@@ -45,13 +45,16 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@ai-sdk/google": "^2.0.43",
+		"@ai-sdk/svelte": "^3.0.101",
 		"@google/genai": "^1.20.0",
 		"@prisma/client": "^6.16.2",
+		"ai": "^5.0.101",
 		"lucide-svelte": "^0.544.0",
 		"mime": "^4.1.0",
 		"mode-watcher": "^1.1.0",
 		"svelte-clerk": "^0.17.2",
 		"svelte-dnd-action": "^0.9.65",
-		"zod": "^4.1.9"
+		"zod": "^4.1.13"
 	}
 }
